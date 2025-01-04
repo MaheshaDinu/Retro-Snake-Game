@@ -46,6 +46,8 @@ function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+
+
 // Start game
 function startGame() {
   initGame();
@@ -83,6 +85,8 @@ function stopGame() {
   ctx.textAlign = "center";
   ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2);
 
+  updateTitleAndMetaTags(score);
+
   // Generate shareable URL
   const baseURL = "https://theretrosnakegame.netlify.app/";
   const shareText = `I scored ${score} in Retro Snake Game! Can you beat my score?`;
@@ -103,6 +107,19 @@ function stopGame() {
   gameContainer.appendChild(shareLink);
 
   toggleButtons("stop");
+}
+function updateTitleAndMetaTags(score) {
+  // Update the page title
+  document.title = `I scored ${score} points in Snake Game!`;
+
+  // Update Open Graph meta tags
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  const ogDescription = document.querySelector('meta[property="og:description"]');
+  const ogImage = document.querySelector('meta[property="og:image"]');
+
+  if (ogTitle) ogTitle.content = `I scored ${score} points in Snake Game!`;
+  if (ogDescription) ogDescription.content = `Think you can beat my score of ${score} points? Try it now!`;
+  if (ogImage) ogImage.content = "Assets/snake game.png"; // Optional: Set an image based on the score
 }
 
 
@@ -276,23 +293,4 @@ function changeDirection(newDirection) {
   if (newDirection === "LEFT" && direction !== "RIGHT") direction = "LEFT";
   if (newDirection === "RIGHT" && direction !== "LEFT") direction = "RIGHT";
 }
-// Code to update metadata dynamically based on the URL's query parameters
-window.addEventListener('load', function() {
-  // Get score from query parameters
-  const params = new URLSearchParams(window.location.search);
-  const score = params.get("score");
 
-  if (score) {
-    // Update the page title
-    document.title = `I scored ${score} points in Snake Game!`;
-
-    // Update Open Graph meta tags
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    const ogDescription = document.querySelector('meta[property="og:description"]');
-    const ogImage = document.querySelector('meta[property="og:image"]');
-
-    if (ogTitle) ogTitle.content = `I scored ${score} points in Snake Game!`;
-    if (ogDescription) ogDescription.content = `Think you can beat my score of ${score} points? Try it now!`;
-    if (ogImage) ogImage.content = "Assets/snake game.png"; // Optional: Set an image based on the score
-  }
-});
