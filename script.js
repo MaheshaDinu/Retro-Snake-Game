@@ -69,25 +69,48 @@ function resumeGame() {
   isRunning = true;
   gameInterval = setInterval(updateGame, speed);
 }
-
+const shareLink = document.createElement("a");
 // Stop game
 function stopGame() {
   clearInterval(gameInterval);
   clearTimeout(specialFoodTimer);
   isRunning = false;
-  //arrowControls.classList.add("hidden");
+
+  // Display final score on canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.font = "bold 30px monospace";
   ctx.fillStyle = "#0f380f";
   ctx.textAlign = "center";
   ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2);
+
+  // Generate shareable URL
+  const baseURL = "https://theretrosnakegame.netlify.app/";
+  const shareText = `I scored ${score} in Retro Snake Game! Can you beat my score?`;
+  const shareURL = `${baseURL}?score=${encodeURIComponent(score)}&text=${encodeURIComponent(shareText)}`;
+
+  // Create share link
+  
+  shareLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareURL)}`;
+  shareLink.target = "_blank";
+  shareLink.textContent = "Share Your Score!";
+  shareLink.className = "share-button";
+  shareLink.style.display = "block";
+  shareLink.style.marginTop = "20px";
+  shareLink.style.textAlign = "center";
+
+  // Add share link to the game container
+  const gameContainer = document.querySelector(".gameboy");
+  gameContainer.appendChild(shareLink);
+
   toggleButtons("stop");
 }
+
 
 // Try again
 function tryAgain() {
   toggleButtons("tryAgain");
   //arrowControls.classList.add("hidden");
+  shareLink.style.display = "none";
   initGame();
 }
 
@@ -253,3 +276,23 @@ function changeDirection(newDirection) {
   if (newDirection === "LEFT" && direction !== "RIGHT") direction = "LEFT";
   if (newDirection === "RIGHT" && direction !== "LEFT") direction = "RIGHT";
 }
+// Code to update metadata dynamically based on the URL's query parameters
+window.addEventListener('load', function() {
+  // Get score from query parameters
+  const params = new URLSearchParams(window.location.search);
+  const score = params.get("score");
+
+  if (score) {
+    // Update the page title
+    document.title = `I scored ${score} points in Snake Game!`;
+
+    // Update Open Graph meta tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    const ogImage = document.querySelector('meta[property="og:image"]');
+
+    if (ogTitle) ogTitle.content = `I scored ${score} points in Snake Game!`;
+    if (ogDescription) ogDescription.content = `Think you can beat my score of ${score} points? Try it now!`;
+    if (ogImage) ogImage.content = "Assets/snake game.png"; // Optional: Set an image based on the score
+  }
+});
