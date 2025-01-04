@@ -7,6 +7,11 @@ body {
   height: 100vh;
   margin: 0;
 }
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 .gameboy {
   display: flex;
